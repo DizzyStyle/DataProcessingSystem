@@ -214,14 +214,15 @@ namespace DataProcessingSystem
             try
             {
                 //Запоминаем имя файла для удаления
-                String filefordelete = Global.directory + "/" + Global.filename;
+                Global.filenameForDelete = Global.filename;
                 
                 //И сразу перескакиваем на следующий
                 try
                 {
                     button_Next_Click(button_Next, e);
                     //Пытаемся удалить файл по текущему пути
-                    File.Delete(Global.directory + "/" + Global.filename);
+                    File.Delete(Global.directory + "/" + Global.filenameForDelete);
+                    Global.filenameForDelete = "";
                 }
                 //...или если не получилось
                 catch (Exception)
@@ -231,7 +232,8 @@ namespace DataProcessingSystem
                     {
                         button_Previous_Click(button_Next, e);
                         //Пытаемся удалить файл по текущему пути
-                        File.Delete(Global.directory + "/" + Global.filename);
+                        File.Delete(Global.directory + "/" + Global.filenameForDelete);
+                        Global.filenameForDelete = "";
                     }
                     //...а если и так не вышло
                     catch (Exception exception)

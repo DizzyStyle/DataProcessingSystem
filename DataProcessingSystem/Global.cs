@@ -22,6 +22,8 @@ namespace DataProcessingSystem
         public static String outputfileName = "";
         //Исходящая дирректория для обработки
         public static String outputfileDirectory = "";
+        //Файл для удаления
+        public static String filenameForDelete = "";
     }
     //Статус программы #разработка#
     public static class Status

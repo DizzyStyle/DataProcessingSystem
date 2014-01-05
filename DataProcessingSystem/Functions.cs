@@ -337,16 +337,6 @@ namespace DataProcessingSystem
                     massive.Shift(point);
                 }
             }
-            for (int i = 0; i < Global.slip; i++)
-            {
-                //если нет, значит массив уже заполнен, пора рисовать и считать
-                //Получаем строку для записи в другой файл
-                string value = massive.GetXById(i) + ";" + massive.GetYById(i) + ";";
-                //Записываем в него уже новые значения с посчитаным средним
-                sw.WriteLine(value);
-                //Добавляем точки на график
-                Functions.BuildChart(new XY(massive.GetXById(i), massive.GetYById(i)), chart, seriesID);
-            }
             //Закрываем потоки которые блокируют этот файл
             sr.Close();
             sw.Close();
