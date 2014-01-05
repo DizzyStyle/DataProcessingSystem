@@ -161,14 +161,14 @@ namespace DataProcessingSystem
             foreach (var point in points)
             {
                 //Добавление точек на график
-                chart.Series[seriesID].Points.AddXY(point.x,point.y);
+                chart.Series[seriesID].Points.AddXY(point.x,point.y * Global.multiplication);
             }
             return;
         }
         //Добавление точки на график(одной!)
         public static void BuildChart(XY point, Chart chart, int seriesID)
         {
-            chart.Series[seriesID].Points.AddXY(point.x, point.y);
+            chart.Series[seriesID].Points.AddXY(point.x, point.y * Global.multiplication);
             return;
         }
 
@@ -203,11 +203,11 @@ namespace DataProcessingSystem
                 if (x>Points.xmin)
                 {
                     //Получаем строку для записи в другой файл
-                    string value = x + ";" + y + ";";
+                    string value = (x - Points.xmin) + ";" + y + ";";
                     //Записываем в него уже новые значения с посчитаным средним
                     sw.WriteLine(value);
                     //Добавляем точки на график
-                    Functions.BuildChart(new XY(x, y), chart, seriesID);
+                    Functions.BuildChart(new XY(x - Points.xmin, y), chart, seriesID);
                 }
             }
             //Закрываем потоки которые блокируют этот файл
@@ -246,11 +246,11 @@ namespace DataProcessingSystem
                 if (x > Points.xmax)
                 {
                     //Получаем строку для записи в другой файл
-                    string value = x + ";" + y + ";";
+                    string value = (x - Points.xmax) + ";" + y + ";";
                     //Записываем в него уже новые значения с посчитаным средним
                     sw.WriteLine(value);
                     //Добавляем точки на график
-                    Functions.BuildChart(new XY(x, y), chart, seriesID);
+                    Functions.BuildChart(new XY((x - Points.xmax), y), chart, seriesID);
                 }
             }
             //Закрываем потоки которые блокируют этот файл
@@ -283,7 +283,7 @@ namespace DataProcessingSystem
                 int x = Int32.Parse(buffer.Split(';')[0]);
                 if (x < 0)
                     continue;
-                double y = Double.Parse(buffer.Split(';')[1]) * Global.multiplication;
+                double y = Double.Parse(buffer.Split(';')[1]);// * Global.multiplication;
                 //Инициализруем точку
                 XY point = new XY(x, y);
                 //Печатаем точку
@@ -319,7 +319,7 @@ namespace DataProcessingSystem
                 int x = Int32.Parse(buffer.Split(';')[0]);
                 if (x < 0)
                     continue;
-                double y = Double.Parse(buffer.Split(';')[1]) * Global.multiplication;
+                double y = Double.Parse(buffer.Split(';')[1]);// * Global.multiplication;
                 //Инициализруем точку
                 XY point = new XY(x, y);
                 //Пытаемся добавить ее в массив значений для дальнейшей обработки

@@ -578,6 +578,7 @@ namespace DataProcessingSystem
             Global.multiplication = 1;
             toolStripMenuItem8.Checked = true;
             toolStripMenuItem2.Checked = false;
+            BuildFile(Global.directory + "/" + Global.filename);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
@@ -585,6 +586,7 @@ namespace DataProcessingSystem
             Global.multiplication = 1000;
             toolStripMenuItem8.Checked = false;
             toolStripMenuItem2.Checked = true;
+            BuildFile(Global.directory + "/" + Global.filename);
         }
 
        
