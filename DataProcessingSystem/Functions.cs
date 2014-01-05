@@ -79,6 +79,30 @@ namespace DataProcessingSystem
             }
             return S/Global.slip;
         }
+        //Получение X
+        public int GetXById(int id = 0)
+        {
+            try
+            {
+                return massive[id].x;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+        }
+        //Получение Y
+        public double GetYById(int id = 0)
+        {
+            try
+            {
+                return massive[id].y;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+        }
         //Получение первого X
         public int GetXFirst()
         {
@@ -313,28 +337,15 @@ namespace DataProcessingSystem
                     massive.Shift(point);
                 }
             }
-            XY lastpoint = new XY(massive.GetXLast() + 1, massive.GetYLast());
             for (int i = 0; i < Global.slip; i++)
             {
                 //если нет, значит массив уже заполнен, пора рисовать и считать
                 //Получаем строку для записи в другой файл
-                string value = massive.GetXFirst() + ";" + massive.Middle() + ";";
+                string value = massive.GetXById(i) + ";" + massive.GetYById(i) + ";";
                 //Записываем в него уже новые значения с посчитаным средним
                 sw.WriteLine(value);
                 //Добавляем точки на график
-                Functions.BuildChart(new XY(massive.GetXFirst(), massive.Middle()), chart, seriesID);
-                //Сдвигаем массив и добавляем новое значение
-                massive.Shift(lastpoint);
-                lastpoint.x++;
-//                //если нет, значит массив уже заполнен, пора рисовать и считать
-//                    //Получаем строку для записи в другой файл
-//                    string value = (massive.GetXFirst()) + ";" + massive.Middle() + ";";
-//                    //Записываем в него уже новые значения с посчитаным средним
-//                    sw.WriteLine(value);
-//                    //Добавляем точки на график
-//                    Functions.BuildChart(new XY(massive.GetXFirst(), massive.Middle()), chart, seriesID);
-//                    //Сдвигаем массив и добавляем новое значение
-//                    massive.Shift(new XY(massive.GetXLast() + 1, massive.GetYLast()));
+                Functions.BuildChart(new XY(massive.GetXById(i), massive.GetYById(i)), chart, seriesID);
             }
             //Закрываем потоки которые блокируют этот файл
             sr.Close();

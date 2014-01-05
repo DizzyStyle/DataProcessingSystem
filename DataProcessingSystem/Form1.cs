@@ -213,12 +213,15 @@ namespace DataProcessingSystem
         {
             try
             {
-                //Пытаемся удалить файл по текущему пути
-                File.Delete(Global.directory + "/" + Global.filename);
+                //Запоминаем имя файла для удаления
+                String filefordelete = Global.directory + "/" + Global.filename;
+                
                 //И сразу перескакиваем на следующий
                 try
                 {
                     button_Next_Click(button_Next, e);
+                    //Пытаемся удалить файл по текущему пути
+                    File.Delete(Global.directory + "/" + Global.filename);
                 }
                 //...или если не получилось
                 catch (Exception)
@@ -227,6 +230,8 @@ namespace DataProcessingSystem
                     try
                     {
                         button_Previous_Click(button_Next, e);
+                        //Пытаемся удалить файл по текущему пути
+                        File.Delete(Global.directory + "/" + Global.filename);
                     }
                     //...а если и так не вышло
                     catch (Exception exception)
@@ -279,12 +284,23 @@ namespace DataProcessingSystem
             
         }
         //Меняем значения "скольжения"
+        private void toolStripMenuItem6_Click(object sender, EventArgs e)
+        {
+            Global.slip = 1;
+            toolStripMenuItem6.Checked = true;
+            toolStripMenuItem3.Checked = false;
+            toolStripMenuItem4.Checked = false;
+            toolStripMenuItem5.Checked = false;
+            toolStripMenuItem7.Checked = false;
+        }
+        //Меняем значения "скольжения"
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
             Global.slip = 50;
             toolStripMenuItem3.Checked = true;
             toolStripMenuItem4.Checked = false;
             toolStripMenuItem5.Checked = false;
+            toolStripMenuItem6.Checked = false;
             toolStripMenuItem7.Checked = false;
         }
         //Меняем значения "скольжения"
@@ -293,6 +309,7 @@ namespace DataProcessingSystem
             Global.slip = 100;
             toolStripMenuItem3.Checked = false;
             toolStripMenuItem4.Checked = true;
+            toolStripMenuItem6.Checked = false;
             toolStripMenuItem7.Checked = false;
             toolStripMenuItem5.Checked = false;
         }
@@ -302,6 +319,7 @@ namespace DataProcessingSystem
             Global.slip = 150;
             toolStripMenuItem3.Checked = false;
             toolStripMenuItem4.Checked = false;
+            toolStripMenuItem6.Checked = false;
             toolStripMenuItem5.Checked = true;
             toolStripMenuItem7.Checked = false;
         }
@@ -311,6 +329,7 @@ namespace DataProcessingSystem
             Global.slip = 200;
             toolStripMenuItem3.Checked = false;
             toolStripMenuItem4.Checked = false;
+            toolStripMenuItem6.Checked = false;
             toolStripMenuItem5.Checked = false;
             toolStripMenuItem7.Checked = true;
         }
@@ -415,7 +434,7 @@ namespace DataProcessingSystem
             chart_MainChart.Series[1].Points.AddXY(index, maximum);
             Points.xmax = index;
         }
-
+        //Обрезка по минемальному значению
         private void поМинимальномуToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -447,7 +466,7 @@ namespace DataProcessingSystem
                 editstatus(exception.Message, Color.Red);
             }
         }
-
+        //Обрезка по максимальному значения
         private void поМаксимальномуToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -565,6 +584,8 @@ namespace DataProcessingSystem
             toolStripMenuItem8.Checked = false;
             toolStripMenuItem2.Checked = true;
         }
+
+       
 
     }
 }
