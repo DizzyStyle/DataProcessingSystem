@@ -1,0 +1,9 @@
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\bin\Debug\DataProcessingSystem.exe.config
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\obj\Debug\DataProcessingSystem.Properties.Resources.resources
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\obj\Debug\DataProcessingSystem.csproj.GenerateResource.Cache
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\bin\Debug\DataProcessingSystem.exe
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\bin\Debug\DataProcessingSystem.pdb
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\obj\Debug\DataProcessingSystem.exe
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\obj\Debug\DataProcessingSystem.pdb
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\obj\Debug\DataProcessingSystem.Author.resources
+C:\Users\DizzyStyle\Documents\Visual Studio 2012\Projects\DataProcessingSystem\DataProcessingSystem\obj\Debug\DataProcessingSystem.Form_Main.resources
