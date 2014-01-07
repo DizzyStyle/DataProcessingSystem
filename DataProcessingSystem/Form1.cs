@@ -110,7 +110,7 @@ namespace DataProcessingSystem
             
         }
         //Обработка файла
-        public void BuildFile()
+        public Boolean BuildFile()
         {
             //Вначале чистим все графики
             Clear();
@@ -119,16 +119,17 @@ namespace DataProcessingSystem
                 //Пытаемся распарсить файл и записать его в Chart
                 Parser.ParsFile(chart_MainChart, 0);
                 editstatus("Файл успешно обработан.", Color.Green);
+                return true;
             }
             catch (Exception exception)
             {
                 //editstatus(exception.Message,Color.Red);
                 editstatus("Неверная структура файла. Ошибка форматов.", Color.Red);
-                return;
+                return false;
             }
         }
         //Обработка файла
-        public void BuildFile(String path)
+        public Boolean BuildFile(String path)
         {
             //Вначале чистим все графики
             Clear();
@@ -137,12 +138,13 @@ namespace DataProcessingSystem
                 //Пытаемся распарсить файл и записать его в Chart
                 Parser.ParsFile(chart_MainChart, 0, path);
                 editstatus("Файл успешно обработан.", Color.Green);
+                return true;
             }
             catch (Exception exception)
             {
                 //editstatus(exception.Message,Color.Red);
                 editstatus("Неверная структура файла. Ошибка форматов.", Color.Red);
-                return;
+                return false;
             }
         }
         //Выбор следующего файла из списка
@@ -206,7 +208,7 @@ namespace DataProcessingSystem
         private void Form1_Load(object sender, EventArgs e)
         {
             красныйToolStripMenuItem_Click(sender,e);
-            синийToolStripMenuItem1_Click(sender,e);
+            синийToolStripMenuItem_Line_Click(sender,e);
         }
         //Удаление файла
         private void button_DeleteFile_Click(object sender, EventArgs e)
@@ -242,7 +244,7 @@ namespace DataProcessingSystem
                         editstatus(exception.Message, Color.Red);
                     }
                 }
-                editstatus("Файл " + Global.filename + " успешно удален.", Color.Green);
+                editstatus("Файл " + Global.filenameForDelete + " успешно удален.", Color.Green);
             }
             catch (Exception exception)
             {
@@ -250,9 +252,8 @@ namespace DataProcessingSystem
             }
             
         }
-        //Кнорка обработки
         //Посылаем файл на обработку
-        private void button_Processing_Click(object sender, EventArgs e)
+        private void ProcessingFile()
         {
             try
             {
@@ -261,8 +262,8 @@ namespace DataProcessingSystem
                 //Инициализируем путь к исходящий директории
                 Global.outputfileDirectory = Global.directory + "/" + "Processing" + "_" + System.DateTime.Now.Day + "." + System.DateTime.Now.Month + "." + System.DateTime.Now.Year;
                 //Создаем исходящий файл исходя из кучи параметров
-                Global.outputfileName = System.IO.Path.GetFileNameWithoutExtension(Global.filename) + 
-                    "_Processing(" + Global.slip + ")" + 
+                Global.outputfileName = System.IO.Path.GetFileNameWithoutExtension(Global.filename) +
+                    "_Processing(" + Global.slip + ")" +
                     System.IO.Path.GetExtension(Global.filename);
                 //Создаем исходящую дирректорию
                 Directory.CreateDirectory(Global.outputfileDirectory);
@@ -272,7 +273,7 @@ namespace DataProcessingSystem
             {
                 editstatus(exception.Message, Color.Red);
             }
-            
+
             try
             {
                 //Парсим файл но уже с обработкой
@@ -283,7 +284,13 @@ namespace DataProcessingSystem
             {
                 editstatus(exception.Message, Color.Red);
             }
-            
+        }
+
+        //Кнорка обработки
+        //Посылаем файл на обработку
+        private void button_Processing_Click(object sender, EventArgs e)
+        {
+            ProcessingFile();
         }
         //Меняем значения "скольжения"
         private void toolStripMenuItem6_Click(object sender, EventArgs e)
@@ -347,14 +354,26 @@ namespace DataProcessingSystem
             Author author = new Author();
             author.ShowDialog();
         }
-
+        //Сохранение файла в другую дирректорию
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
-        }
+            saveFileDialog_SaveFile.FileName = Global.filename;
+            saveFileDialog_SaveFile.ShowDialog();
+            if (String.IsNullOrEmpty(saveFileDialog_SaveFile.FileName))
+            {
+                editstatus("Не удалось сохранить файл. Проверьте имя и путь или подтвердите свой выбор.", Color.Red);
+                return;
+            }
 
-        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+            try
+            {
+                File.Copy(Global.directory + "/" + Global.filename, saveFileDialog_SaveFile.FileName);
+                editstatus("Файл успешно сохранен.", Color.Green);
+            }
+            catch (Exception exception)
+            {
+                editstatus(exception.Message, Color.Red);
+            }
 
         }
 
@@ -403,6 +422,7 @@ namespace DataProcessingSystem
                 return;
             chart_MainChart.Series[1].Points.AddXY(index,minumum);
             Points.xmin = index;
+            editstatus("Минимум успешно найден.", Color.Green);
         }
         //Нахождение максимума по выделенной области
         private void button_Max_Click(object sender, EventArgs e)
@@ -435,6 +455,7 @@ namespace DataProcessingSystem
                 return;
             chart_MainChart.Series[1].Points.AddXY(index, maximum);
             Points.xmax = index;
+            editstatus("Максимум успешно найден.", Color.Green);
         }
         //Обрезка по минемальному значению
         private void поМинимальномуToolStripMenuItem_Click(object sender, EventArgs e)
@@ -500,79 +521,108 @@ namespace DataProcessingSystem
                 editstatus(exception.Message, Color.Red);
             }
         }
-
+        //Выбор цвета для точек на основном графике
         private void красныйToolStripMenuItem_Click(object sender, EventArgs e)
         {
             chart_MainChart.Series[1].Color = Color.Red;
-            красныйToolStripMenuItem.Checked = true;
-            зеленыйToolStripMenuItem.Checked = false;
-            синийToolStripMenuItem.Checked = false;
-            оранжевыйToolStripMenuItem.Checked = false;
+            красныйToolStripMenuItem_point.Checked = true;
+            зеленыйToolStripMenuItem_point.Checked = false;
+            синийToolStripMenuItem_point.Checked = false;
+            оранжевыйToolStripMenuItem_point.Checked = false;
+            черныйToolStripMenuItem_point.Checked = false;
         }
-
+        //Выбор цвета для точек на основном графике
         private void зеленыйToolStripMenuItem_Click(object sender, EventArgs e)
         {
             chart_MainChart.Series[1].Color = Color.Green;
-            красныйToolStripMenuItem.Checked = false;
-            зеленыйToolStripMenuItem.Checked = true;
-            синийToolStripMenuItem.Checked = false;
-            оранжевыйToolStripMenuItem.Checked = false;
+            красныйToolStripMenuItem_point.Checked = false;
+            зеленыйToolStripMenuItem_point.Checked = true;
+            синийToolStripMenuItem_point.Checked = false;
+            оранжевыйToolStripMenuItem_point.Checked = false;
+            черныйToolStripMenuItem_point.Checked = false;
         }
-
+        //Выбор цвета для точек на основном графике
         private void синийToolStripMenuItem_Click(object sender, EventArgs e)
         {
             chart_MainChart.Series[1].Color = Color.Blue;
-            красныйToolStripMenuItem.Checked = false;
-            зеленыйToolStripMenuItem.Checked = false;
-            синийToolStripMenuItem.Checked = true;
-            оранжевыйToolStripMenuItem.Checked = false;
+            красныйToolStripMenuItem_point.Checked = false;
+            зеленыйToolStripMenuItem_point.Checked = false;
+            синийToolStripMenuItem_point.Checked = true;
+            оранжевыйToolStripMenuItem_point.Checked = false;
+            черныйToolStripMenuItem_point.Checked = false;
         }
-
+        //Выбор цвета для точек на основном графике
         private void оранжевыйToolStripMenuItem_Click(object sender, EventArgs e)
         {
             chart_MainChart.Series[1].Color = Color.Orange;
-            красныйToolStripMenuItem.Checked = false;
-            зеленыйToolStripMenuItem.Checked = false;
-            синийToolStripMenuItem.Checked = false;
-            оранжевыйToolStripMenuItem.Checked = true;
+            красныйToolStripMenuItem_point.Checked = false;
+            зеленыйToolStripMenuItem_point.Checked = false;
+            синийToolStripMenuItem_point.Checked = false;
+            оранжевыйToolStripMenuItem_point.Checked = true;
+            черныйToolStripMenuItem_point.Checked = false;
         }
-
-        private void красныйToolStripMenuItem1_Click(object sender, EventArgs e)
+        //Выбор цвета для точек на основном графике
+        private void черныйToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            chart_MainChart.Series[1].Color = Color.Black;
+            красныйToolStripMenuItem_point.Checked = false;
+            зеленыйToolStripMenuItem_point.Checked = false;
+            синийToolStripMenuItem_point.Checked = false;
+            оранжевыйToolStripMenuItem_point.Checked = false;
+            черныйToolStripMenuItem_point.Checked = true;
+        }
+        //Выбор цвета для основного графика
+        private void красныйToolStripMenuItem_Line_Click(object sender, EventArgs e)
         {
             chart_MainChart.Series[0].Color = Color.Red;
-            красныйToolStripMenuItem1.Checked = true;
-            зеленыйToolStripMenuItem1.Checked = false;
-            синийToolStripMenuItem1.Checked = false;
-            оранжевыйToolStripMenuItem1.Checked = false;
+            красныйToolStripMenuItem_line.Checked = true;
+            зеленыйToolStripMenuItem_line.Checked = false;
+            синийToolStripMenuItem_line.Checked = false;
+            оранжевыйToolStripMenuItem_line.Checked = false;
+            черныйToolStripMenuItem_line.Checked = false;
         }
-
-        private void зеленыйToolStripMenuItem1_Click(object sender, EventArgs e)
+        //Выбор цвета для основного графика
+        private void зеленыйToolStripMenuItem_Line_Click(object sender, EventArgs e)
         {
             chart_MainChart.Series[0].Color = Color.Green;
-            красныйToolStripMenuItem1.Checked = false;
-            зеленыйToolStripMenuItem1.Checked = true;
-            синийToolStripMenuItem1.Checked = false;
-            оранжевыйToolStripMenuItem1.Checked = false;
+            красныйToolStripMenuItem_line.Checked = false;
+            зеленыйToolStripMenuItem_line.Checked = true;
+            синийToolStripMenuItem_line.Checked = false;
+            оранжевыйToolStripMenuItem_line.Checked = false;
+            черныйToolStripMenuItem_line.Checked = false;
         }
-
-        private void синийToolStripMenuItem1_Click(object sender, EventArgs e)
+        //Выбор цвета для основного графика
+        private void синийToolStripMenuItem_Line_Click(object sender, EventArgs e)
         {
             chart_MainChart.Series[0].Color = Color.Blue;
-            красныйToolStripMenuItem1.Checked = false;
-            зеленыйToolStripMenuItem1.Checked = false;
-            синийToolStripMenuItem1.Checked = true;
-            оранжевыйToolStripMenuItem1.Checked = false;
+            красныйToolStripMenuItem_line.Checked = false;
+            зеленыйToolStripMenuItem_line.Checked = false;
+            синийToolStripMenuItem_line.Checked = true;
+            оранжевыйToolStripMenuItem_line.Checked = false;
+            черныйToolStripMenuItem_line.Checked = false;
         }
-
-        private void оранжевыйToolStripMenuItem1_Click(object sender, EventArgs e)
+        //Выбор цвета для основного графика
+        private void оранжевыйToolStripMenuItem_Line_Click(object sender, EventArgs e)
         {
             chart_MainChart.Series[0].Color = Color.Orange;
-            красныйToolStripMenuItem1.Checked = false;
-            зеленыйToolStripMenuItem1.Checked = false;
-            синийToolStripMenuItem1.Checked = false;
-            оранжевыйToolStripMenuItem1.Checked = true;
+            красныйToolStripMenuItem_line.Checked = false;
+            зеленыйToolStripMenuItem_line.Checked = false;
+            синийToolStripMenuItem_line.Checked = false;
+            оранжевыйToolStripMenuItem_line.Checked = true;
+            черныйToolStripMenuItem_line.Checked = false;
         }
-
+        //Выбор цвета для основного графика
+        private void черныйToolStripMenuItem_Line_Click(object sender, EventArgs e)
+        {
+            chart_MainChart.Series[0].Color = Color.Black;
+            красныйToolStripMenuItem_line.Checked = false;
+            зеленыйToolStripMenuItem_line.Checked = false;
+            синийToolStripMenuItem_line.Checked = false;
+            оранжевыйToolStripMenuItem_line.Checked = false;
+            черныйToolStripMenuItem_line.Checked = true;
+        }
+        //Выбор масштаба для графика
+        //В
         private void toolStripMenuItem8_Click(object sender, EventArgs e)
         {
             Global.multiplication = 1;
@@ -580,7 +630,8 @@ namespace DataProcessingSystem
             toolStripMenuItem2.Checked = false;
             BuildFile(Global.directory + "/" + Global.filename);
         }
-
+        //Выбор масштаба для графика
+        //мВ
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
             Global.multiplication = 1000;
@@ -588,8 +639,61 @@ namespace DataProcessingSystem
             toolStripMenuItem2.Checked = true;
             BuildFile(Global.directory + "/" + Global.filename);
         }
+        //Автоматически обработать и выбрать следующий
+        private void button_ProcessingAndNext_Click(object sender, EventArgs e)
+        {
+            button_Next_Click(sender, e);
+            button_Processing_Click(sender, e);
+        }
+        //Обработать всю дирректорию
+        private void button_ProcessingDirectory_Click(object sender, EventArgs e)
+        {
+            int InCorrectFiles = 0;
+            try
+            {
+                //Строим текущий файл
+                BuildFile();
+                ProcessingFile();
+                //Получаем список всех файлов в директории
+                //Исходя из текущего выбранного файла
+                List<String> files = new List<string>();
+                files = Directory.GetFiles(Global.directory).ToList();
+                foreach (var file in files)
+                {
+                    Global.filename = System.IO.Path.GetFileName(file);
+                    label1.Text = Global.filename;
+                    try
+                    {
+                        if (BuildFile())
+                        {
+                            ProcessingFile();
+                        }
+                        else
+                        {
+                            InCorrectFiles++;
+                            //editstatus("Один или несколько файлов в очереди не обработаны. Необработанных файлов - " + InCorrectFiles, Color.Red);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        editstatus(exception.Message, Color.Red);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                editstatus(exception.Message, Color.Red);
+            }
+            if (InCorrectFiles == 0)
+            {
+                editstatus("Все файлы успешно обработанны.",Color.Green);
+            }
+            else
+            {
+                editstatus("Один или несколько файлов в очереди не обработаны. Необработанных файлов - " + InCorrectFiles, Color.Red);
+            }
+        }
 
-       
-
+        
     }
 }
